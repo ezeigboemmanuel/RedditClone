@@ -1,6 +1,9 @@
 import { authModalState } from "@/app/atoms/authModalAtom";
+import { auth } from "@/app/firebase/clientApp";
+import { FIREBASE_ERRORS } from "@/app/firebase/errors";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useSetRecoilState } from "recoil";
 
 type LogInProps = {};
@@ -12,7 +15,17 @@ const LogIn: React.FC<LogInProps> = () => {
     password: "",
   });
 
-  const onSubmit = () => {};
+  const [
+    signInWithEmailAndPassword,
+    user,
+    loading,
+    error,
+  ] = useSignInWithEmailAndPassword(auth);
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    signInWithEmailAndPassword(loginForm.email, loginForm.password)
+  };
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginForm((prev) => ({
       ...prev,
@@ -20,7 +33,7 @@ const LogIn: React.FC<LogInProps> = () => {
     }));
   };
   return (
-    <form>
+    <form onSubmit = {onSubmit}>
       <Input
         required
         name="email"
@@ -57,9 +70,23 @@ const LogIn: React.FC<LogInProps> = () => {
         }}
         bg="gray.50"
       />
-      <Button type="submit" width="100%" height="36px" mt={2} mb={2}>
+      <Text color='red' fontSize='10pt' textAlign='center'>{FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]}</Text>
+      <Button type="submit" width="100%" height="36px" mt={2} mb={2} isLoading={loading}>
         Log In
       </Button>
+      <Flex justifyContent="center" mb={2}>
+        <Text fontSize="9pt" mr={1}>
+          Forgot your password?
+        </Text>
+        <Text
+          fontSize="9pt"
+          color="blue.500"
+          cursor="pointer"
+          // onClick={() => toggleView("resetPassword")}
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justifyContent="center">
         <Text mr={1}>New here?</Text>
         <Text
