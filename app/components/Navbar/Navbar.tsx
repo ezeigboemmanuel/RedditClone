@@ -4,6 +4,7 @@ import SearchInput from './SearchInput';
 import RightContent from './RightContent/RightContent';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/app/firebase/clientApp';
+import Directory from './Directory/Directory';
 
 
 const Navbar:React.FC = () => {
@@ -19,8 +20,8 @@ const Navbar:React.FC = () => {
                 />
             </Flex>
 
-            {/* <Directory /> */}
-            <SearchInput />
+            {user && <Directory />}
+            <SearchInput user={user} />
             <RightContent user = {user} />
         </Flex>
     )
